@@ -1,50 +1,66 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const bodyParser = require("body-parser");
 
-// Initialize Express app
 const app = express();
 
-// Middleware
+// Middlewares
 app.use(cors());
+app.use(bodyParser.json());
 app.use(express.json());
 
-// Routes
-const userRoutes = require('./Routes/userRoutes');
-const shopRoutes = require('./routes/shopRoutes');
-const tailorRoutes = require('./routes/tailorRoutes');
-const tempEmailRoutes = require('./Routes/tempEmailRoutes');
-// If you later need these, you can uncomment and add them
-// const adminRoutes = require('./routes/adminRoutes');
-// const orderRoutes = require('./routes/orderRoutes');
-
-// Middleware routes
-app.use('/api/users', userRoutes);
-app.use('/api/shops', shopRoutes);
-app.use('/api/tailors', tailorRoutes);
-app.use('/api/temp', tempEmailRoutes);
-
-// Default route
-app.get('/', (req, res) => {
-  res.send('💃 Divyluck Fashion Portal Backend is Running 🎉');
-});
-
-// MongoDB + Server Start
+// MongoDB Connection
+const mongoURI = "mongodb://localhost:27017/Divyluck"; // Replace with your actual URI if different
 const PORT = process.env.PORT || 5000;
-
-// Replace process.env.MONGO_URI with your MongoDB connection string directly
-const mongoURI = "mongodb://localhost:27017/Divyluck"; // your MongoDB connection string
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => {
-    console.log('✅ Connected to MongoDB');
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on http://localhost:${PORT}`);
-    });
-  })
-  .catch(err => {
-    console.error('❌ MongoDB connection error:', err);
+.then(() => {
+  console.log("✅ Connected to MongoDB");
+  app.listen(PORT, () => {
+    console.log(`🚀 Server is running on http://localhost:${PORT}`);
   });
+})
+.catch((err) => {
+  console.error("❌ MongoDB connection error:", err);
+});
+
+// Default Route
+app.get("/", (req, res) => {
+  res.send("💃 Divyluck Fashion Portal Backend is Running 🎉");
+});
+
+// Role-based Registration Route
+app.post("/api/register/:role", (req, res) => {
+  const { role } = req.params;
+  const { email } = req.body;
+
+  if (!["user", "shopkeeper", "tailor"].includes(role)) {
+    return res.status(400).json({ message: "Invalid role selected" });
+  }
+
+  console.log(`Registering ${email} as ${role}`);
+
+  res.status(200).json({
+    message: `Successfully registered ${email} as ${role}`,
+    email,
+    role,
+  });
+});
+
+// Custom Routes
+const userRoutes = require('./Routes/userRoutes');
+const shopRoutes = require('./Routes/shopRoutes');
+const tailorRoutes = require('./Routes/tailorRoutes');
+const tempEmailRoutes = require('./Routes/tempEmailRoutes');
+// const adminRoutes = require('./routes/adminRoutes'); // Uncomment when needed
+// const orderRoutes = require('./routes/orderRoutes'); // Uncomment when needed
+
+// Mount Routes
+app.use('/api/users', userRoutes);
+app.use('/api/shops', shopRoutes);
+app.use('/api/tailors', tailorRoutes);
+app.use('/api/temp', tempEmailRoutes);

@@ -1,6 +1,7 @@
 const Shop = require('../Models/shopModels');
 const bcrypt = require('bcryptjs');
 
+// Shopkeeper registration
 exports.registerShop = async (req, res) => {
     try {
         const {
@@ -17,6 +18,8 @@ exports.registerShop = async (req, res) => {
             logo,
             categories
         } = req.body;
+
+        console.log('Request body:', req.body);  // Log the incoming request data
 
         // ✅ 1. Check if passwords match
         if (password !== confirmPassword) {
@@ -49,14 +52,16 @@ exports.registerShop = async (req, res) => {
 
         // ✅ 5. Save to database
         await newShop.save();
+        console.log('Shop saved successfully:', newShop);  // Log the saved shop
         res.status(201).json({ message: 'Shop registered successfully!', shop: newShop });
 
     } catch (error) {
-        console.error('Error registering shop:', error); // full error for better debugging
+        console.error('Error registering shop:', error); // Log the full error for better debugging
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
 
+// Get all shops
 exports.getAllShops = async (req, res) => {
     try {
         const shops = await Shop.find();

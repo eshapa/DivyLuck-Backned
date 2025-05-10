@@ -13,15 +13,15 @@ const shopSchema = new mongoose.Schema({
     logo: { type: String },
     categories: [
         {
-            categoryName: String,
+            categoryName: { type: String, required: true },
             types: [
                 {
-                    typeName: String,
-                    price: Number
+                    typeName: { type: String, required: true },
+                    price: { type: Number, required: true }
                 }
             ]
         }
     ]
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Shop', shopSchema);

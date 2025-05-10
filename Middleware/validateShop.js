@@ -1,21 +1,34 @@
-const { body, validationResult } = require('express-validator');
+module.exports = (req, res, next) => {
+    const {
+        shopName,
+        owner,
+        email,
+        password,
+        confirmPassword,
+        contact,
+        location,
+        businessLicense,
+        shopImage,
+        profileImage,
+        logo,
+        categories
+    } = req.body;
 
-const validateShop = [
-  body('shopName').notEmpty().withMessage('Shop name is required'),
-  body('owner').notEmpty().withMessage('Owner name is required'),
-  body('email').isEmail().withMessage('Valid email is required'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-  body('confirmPassword').custom((value, { req }) => {
-    if (value !== req.body.password) throw new Error('Passwords do not match');
-    return true;
-  }),
-  body('contact').isLength({ min: 10 }).withMessage('Contact must be at least 10 digits'),
+    if (!shopName || !owner || !email || !password || !confirmPassword || !contact || !location || !businessLicense || !shopImage || !profileImage || !logo || !categories) {
+        return res.status(400).json({ message: 'All fields are required.' });
+    }
 
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    // Check if email is in a valid format
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: 'Invalid email format.' });
+    }
+
+    // Check if contact number is valid
+    const contactRegex = /^[0-9]{10}$/;
+    if (!contactRegex.test(contact)) {
+        return res.status(400).json({ message: 'Invalid contact number.' });
+    }
+
     next();
-  },
-];
-
-module.exports = validateShop;
+};
