@@ -1,12 +1,15 @@
-// Middleware/validateTailor.js
-const { body, validationResult } = require('express-validator');
+const { body, validationResult } = require("express-validator");
 
 const validateTailor = [
-  body('name').notEmpty().withMessage('Name is required'),
-  body('gender').notEmpty().withMessage('Gender is required'),
-  body('phone').notEmpty().withMessage('Phone number is required'),
-  body('email').isEmail().withMessage('Valid email is required'),
-  body('password').notEmpty().withMessage('Password is required'),
+  body("name").notEmpty().withMessage("Name is required"),
+  body("gender").notEmpty().withMessage("Gender is required"),
+  body("phone")
+    .isLength({ min: 10 })
+    .withMessage("Phone number must be at least 10 digits"),
+  body("email").isEmail().withMessage("Valid email is required"),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
 
   (req, res, next) => {
     const errors = validationResult(req);
@@ -14,7 +17,7 @@ const validateTailor = [
       return res.status(400).json({ errors: errors.array() });
     }
     next();
-  }
+  },
 ];
 
 module.exports = validateTailor;
