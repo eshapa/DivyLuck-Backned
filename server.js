@@ -12,9 +12,10 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve uploaded files statically
 
 // MongoDB Connection
-const mongoURI = "mongodb://localhost:27017/Divyluck"; // Replace with your actual URI if different
+const mongoURI = "mongodb://localhost:27017/Divyluck"; // Replace if your URI is different
 const PORT = process.env.PORT || 5000;
 
 mongoose.connect(mongoURI, {
@@ -31,58 +32,26 @@ mongoose.connect(mongoURI, {
   console.error("❌ MongoDB connection error:", err);
 });
 
-// Set up multer storage engine for image uploads
-const storage = multer.diskStorage({
+// Multer setup for portfolio uploads
+const portfolioStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = "uploads/";
-    // Create uploads directory if it doesn't exist
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
+    const dir = path.join(__dirname, "uploads", "portfolio");
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Create unique filename
-  },
-});
-
-// Initialize multer with storage and file filter
-const upload = multer({ storage });
-
-// Route to handle image upload
-app.post('/api/images/upload/:tailorId', upload.array('images'), (req, res) => {
-  const tailorId = req.params.tailorId;
-
-  if (!tailorId) {
-    return res.status(400).json({ message: 'Tailor ID is required.' });
+    cb(null, `${Date.now()}-${file.originalname}`);
   }
-
-  // Get captions and categories sent from frontend
-  const imageDetails = req.files.map((file, index) => {
-    const caption = req.body[`caption_${index}`];
-    const category = req.body[`category_${index}`];
-    
-    return {
-      tailorId,
-      imageUrl: file.path, // Path to the uploaded image file
-      caption,
-      category,
-    };
-  });
-
-  // Save or process image details (e.g., save to database)
-  console.log('Uploaded Images:', imageDetails);
-
-  // Send response
-  res.status(200).json({ message: 'Images uploaded successfully!', imageDetails });
 });
+
+const uploadPortfolio = multer({ storage: portfolioStorage });
 
 // Default Route
 app.get("/", (req, res) => {
   res.send("💃 Divyluck Fashion Portal Backend is Running 🎉");
 });
 
-// Role-based Registration Route
+// Route for role-based registration logging
 app.post("/api/register/:role", (req, res) => {
   const { role } = req.params;
   const { email } = req.body;
@@ -100,16 +69,16 @@ app.post("/api/register/:role", (req, res) => {
   });
 });
 
-// Custom Routes
+// Import routes
 const userRoutes = require('./Routes/userRoutes');
 const shopRoutes = require('./Routes/shopRoutes');
 const tailorRoutes = require('./Routes/tailorRoutes');
 const tempEmailRoutes = require('./Routes/tempEmailRoutes');
-const imageRoutes = require('./Routes/imageRoutes'); // Import image routes
+const imageRoutes = require('./Routes/imageRoutes');
 
-// Mount Routes
+// Mount routes
 app.use('/api/users', userRoutes);
 app.use('/api/shops', shopRoutes);
 app.use('/api/tailors', tailorRoutes);
 app.use('/api/temp', tempEmailRoutes);
-app.use('/api/images', imageRoutes); // Add image routes
+app.use('/api/images', imageRoutes);

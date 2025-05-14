@@ -1,7 +1,6 @@
 const Shop = require('../Models/shopModels');
 const bcrypt = require('bcryptjs');
 
-// Shopkeeper registration
 exports.registerShop = async (req, res) => {
     try {
         const {
@@ -12,30 +11,29 @@ exports.registerShop = async (req, res) => {
             confirmPassword,
             contact,
             location,
-            businessLicense,
-            shopImage,
-            profileImage,
-            logo,
-            categories
+            businessLicense
         } = req.body;
 
-        console.log('Request body:', req.body);  // Log the incoming request data
-
-        // ✅ 1. Check if passwords match
+        // Password check
         if (password !== confirmPassword) {
             return res.status(400).json({ message: 'Passwords do not match.' });
         }
 
-        // ✅ 2. Check if email already exists
+        // Check for existing email
         const existingShop = await Shop.findOne({ email });
         if (existingShop) {
             return res.status(400).json({ message: 'Shop already registered with this email.' });
         }
 
-        // ✅ 3. Hash the password
+        // Password hashing
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // ✅ 4. Create new Shop instance
+        // File upload fields
+        const shopImage = req.files['shopImage']?.[0]?.filename || '';
+        const profileImage = req.files['profileImage']?.[0]?.filename || '';
+        const logo = req.files['logo']?.[0]?.filename || '';
+
+        // Save new shop
         const newShop = new Shop({
             shopName,
             owner,
@@ -46,17 +44,14 @@ exports.registerShop = async (req, res) => {
             businessLicense,
             shopImage,
             profileImage,
-            logo,
-            categories
+            logo
         });
 
-        // ✅ 5. Save to database
         await newShop.save();
-        console.log('Shop saved successfully:', newShop);  // Log the saved shop
         res.status(201).json({ message: 'Shop registered successfully!', shop: newShop });
 
     } catch (error) {
-        console.error('Error registering shop:', error); // Log the full error for better debugging
+        console.error('Error registering shop:', error);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };

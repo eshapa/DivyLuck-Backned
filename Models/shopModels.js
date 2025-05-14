@@ -10,18 +10,7 @@ const shopSchema = new mongoose.Schema({
     businessLicense: { type: String },
     shopImage: { type: String },
     profileImage: { type: String },
-    logo: { type: String },
-    categories: [
-        {
-            categoryName: { type: String, required: true },
-            types: [
-                {
-                    typeName: { type: String, required: true },
-                    price: { type: Number, required: true }
-                }
-            ]
-        }
-    ]
+    logo: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Shop', shopSchema);

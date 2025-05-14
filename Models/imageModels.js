@@ -14,6 +14,10 @@ const imageSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  category: {
+    type: String,
+    default: 'General',
+  },
 });
 
 module.exports = mongoose.model('Image', imageSchema);

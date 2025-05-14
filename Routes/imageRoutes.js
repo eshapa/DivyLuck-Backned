@@ -1,20 +1,32 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 const {
-  uploadImage,
+  uploadMultipleImages,
   getAllImages,
   getImagesByTailorId,
-} = require('../controller/imagecontroller');
+} = require('../controller/imageController');
 
-const upload = require('../Middleware/upload');
+// Multer setup
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = 'uploads/portfolio';
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
 
-// Upload image for a specific tailor
-router.post('/upload/:tailorId', upload.single('image'), uploadImage);
+const upload = multer({ storage });
 
-// Get all images
+// Routes
+router.post('/upload/:tailorId', upload.array('images'), uploadMultipleImages);
 router.get('/', getAllImages);
-
-// Get images by tailorId
 router.get('/:tailorId', getImagesByTailorId);
 
 module.exports = router;

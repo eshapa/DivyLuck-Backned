@@ -1,4 +1,3 @@
-// models/tailorModel.js
 const mongoose = require('mongoose');
 
 const tailorSchema = new mongoose.Schema({
@@ -18,6 +17,7 @@ const tailorSchema = new mongoose.Schema({
   portfolio: { type: String },
 });
 
-const Tailor = mongoose.model('Tailor', tailorSchema);
+// ✅ Fix overwrite error
+const Tailor = mongoose.models.Tailor || mongoose.model('Tailor', tailorSchema);
 
 module.exports = Tailor;
