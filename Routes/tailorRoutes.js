@@ -1,12 +1,12 @@
-const express = require("express");
+// routes/tailorRoutes.js
+const express = require('express');
 const router = express.Router();
-const {
-  registerTailor,
-  getAllTailors,
-} = require("../controller/tailorController");
-const validateTailor = require("../Middleware/validateTailor");
+const { registerTailor, getAllTailors } = require('../controller/tailorController');
 
-router.post("/register", validateTailor, registerTailor);
-router.get("/", getAllTailors);
+// Register tailor
+router.post('/register', registerTailor);
+
+// Get all tailors
+router.get('/', getAllTailors);
 
 module.exports = router;

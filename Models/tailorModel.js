@@ -1,20 +1,23 @@
-const mongoose = require("mongoose");
+// models/tailorModel.js
+const mongoose = require('mongoose');
 
 const tailorSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  gender: { type: String, required: true },
-  phone: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  gender: { type: String },
+  phone: { type: String },
+  city: { type: String },
   shopName: { type: String },
   tailorType: { type: String },
-  experience: { type: Number },
+  experience: { type: String },
   specialty: { type: String },
-  city: { type: String },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
   location: { type: String },
   pricingModel: { type: String },
-  portfolioImages: { type: [String] }, // Array of image URLs
   profilePicture: { type: String },
+  portfolio: { type: String },
 });
 
-module.exports = mongoose.model("Tailor", tailorSchema);
+const Tailor = mongoose.model('Tailor', tailorSchema);
+
+module.exports = Tailor;

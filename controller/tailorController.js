@@ -1,34 +1,28 @@
-const Tailor = require("../Models/tailorModel");
+// controllers/tailorController.js
+const Tailor = require('../Models/tailorModel');
 
-exports.registerTailor = async (req, res) => {
+const registerTailor = async (req, res) => {
   try {
-    // Check if all required fields are present
-    const { name, gender, phone, email, password } = req.body;
-    if (!name || !gender || !phone || !email || !password) {
-      return res.status(400).json({ error: 'All required fields must be provided.' });
-    }
-
-    const tailor = await Tailor.create(req.body);
-    res.status(201).json(tailor);
+    const newTailor = new Tailor(req.body);
+    await newTailor.save();
+    res.status(201).json({ message: 'Tailor registered successfully', tailor: newTailor });
   } catch (error) {
-    console.error("Error during registration:", error);
-    res.status(500).json({ error: 'Internal server error. Please try again later.' });
+    console.error('Error registering tailor:', error);
+    res.status(500).json({ message: 'Failed to register tailor', error: error.message });
   }
 };
 
-exports.getAllTailors = async (req, res) => {
+const getAllTailors = async (req, res) => {
   try {
-    const { gender } = req.query;
-
-    // Build query object for optional filtering
-    const query = gender
-      ? { gender: { $regex: new RegExp(`^${gender}$`, 'i') } }
-      : {};
-
-    const tailors = await Tailor.find(query);
+    const tailors = await Tailor.find();
     res.status(200).json(tailors);
   } catch (error) {
-    console.error('Error fetching tailors:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Error getting tailors:', error);
+    res.status(500).json({ message: 'Failed to get tailors', error: error.message });
   }
+};
+
+module.exports = {
+  registerTailor,
+  getAllTailors,
 };
