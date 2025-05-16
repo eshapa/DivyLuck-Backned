@@ -1,6 +1,7 @@
 const Shop = require('../Models/shopModels');
 const bcrypt = require('bcryptjs');
 
+// Register Shop
 exports.registerShop = async (req, res) => {
     try {
         const {
@@ -14,26 +15,21 @@ exports.registerShop = async (req, res) => {
             businessLicense
         } = req.body;
 
-        // Password check
+        // Password match check
         if (password !== confirmPassword) {
             return res.status(400).json({ message: 'Passwords do not match.' });
         }
 
-        // Check for existing email
+        // Check existing email
         const existingShop = await Shop.findOne({ email });
         if (existingShop) {
             return res.status(400).json({ message: 'Shop already registered with this email.' });
         }
 
-        // Password hashing
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // File upload fields
-        const shopImage = req.files['shopImage']?.[0]?.filename || '';
-        const profileImage = req.files['profileImage']?.[0]?.filename || '';
-        const logo = req.files['logo']?.[0]?.filename || '';
-
-        // Save new shop
+        // Create new shop
         const newShop = new Shop({
             shopName,
             owner,
@@ -41,10 +37,7 @@ exports.registerShop = async (req, res) => {
             password: hashedPassword,
             contact,
             location,
-            businessLicense,
-            shopImage,
-            profileImage,
-            logo
+            businessLicense
         });
 
         await newShop.save();
@@ -56,7 +49,7 @@ exports.registerShop = async (req, res) => {
     }
 };
 
-// Get all shops
+// ✅ Get All Shops (this was missing!)
 exports.getAllShops = async (req, res) => {
     try {
         const shops = await Shop.find();

@@ -7,10 +7,7 @@ const shopSchema = new mongoose.Schema({
     password: { type: String, required: true },
     contact: { type: String, required: true },
     location: { type: String },
-    businessLicense: { type: String },
-    shopImage: { type: String },
-    profileImage: { type: String },
-    logo: { type: String }
+    businessLicense: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Shop', shopSchema);

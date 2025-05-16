@@ -1,5 +1,5 @@
-const Image = require('../Models/imageModels');
-const Tailor = require('../Models/tailorModel');
+const Image = require('../models/imageModels');
+const Tailor = require('../models/tailorModel');
 const path = require('path');
 
 const uploadMultipleImages = async (req, res) => {

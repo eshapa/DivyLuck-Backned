@@ -9,7 +9,7 @@ const {
   getImagesByTailorId,
 } = require('../controller/imageController');
 
-// Multer setup
+// 🔧 Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = 'uploads/portfolio';
@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Routes
+// 🔧 Routes
 router.post('/upload/:tailorId', upload.array('images'), uploadMultipleImages);
 router.get('/', getAllImages);
 router.get('/:tailorId', getImagesByTailorId);

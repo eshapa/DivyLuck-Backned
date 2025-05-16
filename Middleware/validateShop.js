@@ -7,14 +7,11 @@ module.exports = (req, res, next) => {
         confirmPassword,
         contact,
         location,
-        businessLicense,
-        shopImage,
-        profileImage,
-        logo,
-        categories
+        businessLicense
     } = req.body;
 
-    if (!shopName || !owner || !email || !password || !confirmPassword || !contact || !location || !businessLicense || !shopImage || !profileImage || !logo || !categories) {
+    // Validate required fields
+    if (!shopName || !owner || !email || !password || !confirmPassword || !contact || !location || !businessLicense) {
         return res.status(400).json({ message: 'All fields are required.' });
     }
 
