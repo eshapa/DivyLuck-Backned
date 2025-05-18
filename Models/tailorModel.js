@@ -14,7 +14,7 @@ const tailorSchema = new mongoose.Schema({
   location: { type: String },
   pricingModel: { type: String },
   profilePicture: { type: String },
-  portfolio: { type: String },
+
 });
 
 // ✅ Fix overwrite error
